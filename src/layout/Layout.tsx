@@ -1,4 +1,5 @@
 // import React, { FC, ReactNode } from "react";
+import ChatBot from "../components/chatbot/ChatBot";
 import DataView from "../components/dataview/DataView";
 import FileUpload from "../components/fileupload/FileUpload";
 import "./Layout.css";
@@ -34,7 +35,9 @@ const Layout = () => {
             <DataView />
           </div>
         </div>
-        <div className="layout-right-panel">right</div>
+        <div className="layout-right-panel">
+          <ChatBot />
+        </div>
       </div>
     </>
   );
