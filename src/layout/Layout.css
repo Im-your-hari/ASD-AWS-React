@@ -1,0 +1,25 @@
+.layout-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+
+  .layout-left-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    justify-content: space-between;
+    gap: 6px;
+
+    width: 70%;
+    background-color: blue;
+  }
+
+  .layout-right-panel {
+    width: 30%;
+    background-color: aqua;
+  }
+}
