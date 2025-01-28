@@ -23,3 +23,40 @@
     background-color: aqua;
   }
 }
+
+
+/* @import url('bootstrap/dist/css/bootstrap.min.css'); */
+ 
+.ash-bg {
+  background-color: #f6f7f9;
+}
+.ash-white {
+  background-color: #fff;
+}
+.header {
+  background-color: #322448;
+  color: #FFF;
+}
+.logo {
+  position: absolute;
+    left: 8px;
+    top: 8px;
+    width: 80px;
+}
+.footer {
+  background-color: #322448;
+  color: #FFF;
+  font-style: italic;
+  font-size: 12px;
+  text-align: center;
+}
+.info-cont-left {
+  border-left: 8px solid #f6f7f9;
+}
+.info-cont-center {
+  border-left: 8px solid #f6f7f9;
+  border-right: 8px solid #f6f7f9;
+}
+.info-cont-right {
+  border-right: 8px solid #f6f7f9;
+}
