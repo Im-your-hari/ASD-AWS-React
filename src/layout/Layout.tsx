@@ -1,4 +1,5 @@
 // import React, { FC, ReactNode } from "react";
+import Chart from "../components/chart/Chart";
 import ChatBot from "../components/chatbot/ChatBot";
 import DataView from "../components/dataview/DataView";
 import FileUpload from "../components/fileupload/FileUpload";
@@ -26,6 +27,33 @@ import "./Layout.css";
 //   });
 
 const Layout = () => {
+  // const chartProps = {
+  //   labels: ["00:00", "00:10", "00:20", "00:30", "00:40"],
+  //   data: [65, 59, 80, 81, 56],
+  //   title: "Happiness Intensity",
+  // };
+
+  const chartProps = {
+    labels: ["00:00", "00:10", "00:20", "00:30", "00:40"],
+    datasets: [
+      {
+        label: "Happiness",
+        data: [65, 59, 80, 81, 56],
+        borderColor: "#00ff00",
+        tension: 0.1,
+      },
+      {
+        label: "Sadness",
+        data: [45, 49, 30, 51, 76],
+        borderColor: "#ff0000",
+        tension: 0.1,
+      },
+    ],
+    title: "Emotion Intensity",
+    yLabel: "Intensity",
+    xLabel: "Time",
+  };
+
   return (
     <>
       {/* <div className="layout-container">
@@ -68,6 +96,9 @@ const Layout = () => {
           </div>
           <div className="col-4 ash-white info-cont-center">
             Video Input & Graph
+            <div>
+              <Chart {...chartProps} />
+            </div>
           </div>
           <div className="col-4 ash-white info-cont-right">Chat - BedRock</div>
         </div>
