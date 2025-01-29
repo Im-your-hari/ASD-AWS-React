@@ -1,4 +1,5 @@
 // import React, { FC, ReactNode } from "react";
+import { useState } from "react";
 import Chart from "../components/chart/Chart";
 import ChatBot from "../components/chatbot/ChatBot";
 import DataView from "../components/dataview/DataView";
@@ -6,6 +7,8 @@ import FileUpload from "../components/fileupload/FileUpload";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 import ProfileUploader from "../components/ProfileUploader/ProfileUploader";
 import VideoUploadComponent from "../components/VideoUploadComponent/videoUploadComponent";
+import Drawer from "react-modern-drawer";
+import "react-modern-drawer/dist/index.css";
 import "./Layout.css";
 
 // type LayoutProps = {
@@ -33,6 +36,11 @@ const Layout = () => {
   //   data: [65, 59, 80, 81, 56],
   //   title: "Happiness Intensity",
   // };
+
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleDrawer = () => {
+    setIsOpen((prevState) => !prevState);
+  };
 
   const chartProps = {
     labels: ["00:00", "00:10", "00:20", "00:30", "00:40"],
@@ -95,17 +103,35 @@ const Layout = () => {
               <div className="flex-grow-1 ">Audio Input</div>
             </div>
           </div>
-          <div className="col-4 ash-white info-cont-center">
-            Video Input & Graph
+          <div className="col-8 ash-white info-cont-center">
             <div>
               <VideoUploadComponent />
             </div>
+            <hr color="#c0c0c0" />
+            <h2 className="mb-4">Graph</h2>
             <div>
               <Chart {...chartProps} />
             </div>
           </div>
-          <div className="col-4 ash-white info-cont-right">Chat - BedRock</div>
+          {/* Chat Drawer */}
+          <div className={`chat-drawer-container ${isOpen ? "open" : ""}`}>
+            <Drawer
+              open={isOpen}
+              onClose={toggleDrawer}
+              direction="right"
+              className="chat-drawer"
+              size={550}
+            >
+              <div className="chat-container">
+                <ChatBot />
+              </div>
+            </Drawer>
+          </div>
         </div>
+        <button className="chat-button" onClick={toggleDrawer}>
+          Chat
+        </button>
+
         <div className="row">
           <div className="col-12 pt-2 pb-2 footer">Powered By Neuronauts</div>
         </div>

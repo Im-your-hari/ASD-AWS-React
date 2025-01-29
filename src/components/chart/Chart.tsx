@@ -138,12 +138,12 @@ const Chart: React.FC<ChartProps> = ({
         data={populateData(props)}
         options={populateOptions(props)}
         height={250}
-      />
-      <Bar
-        data={populateData(props)}
-        options={populateOptions(props)}
+      />*/}
+      {/* <Bar
+        data={data}
+        options={options}
         height={250}
-      /> */}
+      />  */}
     </>
   );
 };
