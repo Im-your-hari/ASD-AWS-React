@@ -4,6 +4,7 @@ import DataView from "../components/dataview/DataView";
 import FileUpload from "../components/fileupload/FileUpload";
 import ImageUploader from "../components/ImageUploader/ImageUploader";
 import ProfileUploader from "../components/ProfileUploader/ProfileUploader";
+import VideoUploadComponent from "../components/VideoUploadComponent/videoUploadComponent";
 import "./Layout.css";
 
 // type LayoutProps = {
@@ -67,7 +68,7 @@ const Layout = () => {
             </div>
           </div>
           <div className="col-4 ash-white info-cont-center">
-            Video Input & Graph
+            <VideoUploadComponent />
           </div>
           <div className="col-4 ash-white info-cont-right">Chat - BedRock</div>
         </div>
