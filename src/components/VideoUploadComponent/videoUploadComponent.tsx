@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
   uploadDirect,
@@ -15,6 +14,7 @@ interface VideoFile {
   size: number;
   uploadStatus: string;
   analyzingStatus: string;
+  progress: number; // New field for tracking upload progress
 }
 
 const VideoUploadComponent: React.FC = () => {
@@ -29,6 +29,7 @@ const VideoUploadComponent: React.FC = () => {
         size: file.size,
         uploadStatus: "Pending",
         analyzingStatus: "Pending",
+        progress: 0, // Initialize progress to 0%
       }));
       setVideoFiles(newVideoFiles);
     }
@@ -52,12 +53,16 @@ const VideoUploadComponent: React.FC = () => {
       try {
         if (file.size <= CHUNK_SIZE) {
           // Direct upload for small files
-          await uploadDirect(file);
+          await uploadDirect(file, (progress) => {
+            updatedVideoFiles[index].progress = progress;
+            setVideoFiles([...updatedVideoFiles]);
+          });
         } else {
           // Multipart upload for large files
           const { UploadId } = await createMultipartUpload(fileName);
           const totalParts = Math.ceil(file.size / CHUNK_SIZE);
           const uploadPromises = [];
+          let uploadedSize = 0;
 
           for (let partNumber = 1; partNumber <= totalParts; partNumber++) {
             const start = (partNumber - 1) * CHUNK_SIZE;
@@ -65,7 +70,11 @@ const VideoUploadComponent: React.FC = () => {
             const blob = file.slice(start, end);
 
             uploadPromises.push(
-              uploadPart(UploadId!, fileName, blob, partNumber, file.size)
+              uploadPart(UploadId!, fileName, blob, partNumber, file.size, (progress) => {
+                uploadedSize += blob.size;
+                updatedVideoFiles[index].progress = Math.min(100, Math.round((uploadedSize / file.size) * 100));
+                setVideoFiles([...updatedVideoFiles]);
+              })
             );
           }
 
@@ -75,10 +84,12 @@ const VideoUploadComponent: React.FC = () => {
 
         // Update upload status to "Uploaded"
         updatedVideoFiles[index].uploadStatus = "Uploaded";
+        updatedVideoFiles[index].progress = 100;
         setVideoFiles([...updatedVideoFiles]);
       } catch (error) {
         console.error("Error uploading file:", file.name, error);
         updatedVideoFiles[index].uploadStatus = "Failed";
+        updatedVideoFiles[index].progress = 0;
         setVideoFiles([...updatedVideoFiles]);
       }
     });
@@ -112,6 +123,7 @@ const VideoUploadComponent: React.FC = () => {
           <tr>
             <th>File Name</th>
             <th>Upload Status</th>
+            {/* <th>Progress</th> */}
             <th>Analyzing Status</th>
             <th>Actions</th>
           </tr>
@@ -120,7 +132,25 @@ const VideoUploadComponent: React.FC = () => {
           {videoFiles.map((file, index) => (
             <tr key={index}>
               <td>{file.name}</td>
-              <td>{file.uploadStatus}</td>
+              {/* <td>{file.uploadStatus}</td> */}
+              <td>
+                {file.uploadStatus === "Uploading" ? (
+                  <div className="progress">
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      style={{ width: `${file.progress}%` }}
+                      aria-valuenow={file.progress}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
+                      {file.progress}%
+                    </div>
+                  </div>
+                ) : (
+                  file.uploadStatus
+                )}
+              </td>
               <td>{file.analyzingStatus}</td>
               <td>
                 <button
