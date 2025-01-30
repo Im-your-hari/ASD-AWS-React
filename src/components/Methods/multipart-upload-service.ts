@@ -23,7 +23,7 @@ const blobToArrayBuffer = (blob: Blob): Promise<ArrayBuffer> =>
 
 export const createMultipartUpload = async (fileName: string) => {
   const command = new CreateMultipartUploadCommand({
-    Bucket: "asd-exp-image",
+    Bucket: "asd-assets",
     Key: fileName,
   });
   return await s3Client.send(command);
@@ -39,7 +39,7 @@ export const uploadPart = async (
 ): Promise<UploadedPart> => {
   const arrayBuffer = await blobToArrayBuffer(chunk);
   const command = new UploadPartCommand({
-    Bucket: "asd-exp-image",
+    Bucket: "asd-assets",
     Key: fileName,
     PartNumber: partNumber,
     UploadId: uploadId,
@@ -64,7 +64,7 @@ export const completeMultipartUpload = async (
   parts: UploadedPart[]
 ): Promise<void> => {
   const command = new CompleteMultipartUploadCommand({
-    Bucket: "asd-exp-image",
+    Bucket: "asd-assets",
     Key: fileName,
     UploadId: uploadId,
     MultipartUpload: {
@@ -83,7 +83,7 @@ export const uploadDirect = async (
   const body = new Uint8Array(arrayBuffer);
 
   const command = new PutObjectCommand({
-    Bucket: "asd-exp-image",
+    Bucket: "asd-assets",
     Key: file.name,
     Body: body,
     ContentType: file.type,
@@ -104,7 +104,7 @@ export const uploadDirectImage = async (file: File): Promise<void> => {
   const body = new Uint8Array(arrayBuffer); // Convert to Uint8Array
 
   const command = new PutObjectCommand({
-    Bucket: "asd-exp-image",
+    Bucket: "asd-assets",
     Key: objectKey,
     Body: body, // Pass Uint8Array instead of File/Blob
     ContentType: file.type, // Ensure correct MIME type

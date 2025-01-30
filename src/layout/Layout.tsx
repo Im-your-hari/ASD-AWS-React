@@ -1,4 +1,3 @@
-// import React, { FC, ReactNode } from "react";
 import { useState } from "react";
 import Chart from "../components/chart/Chart";
 import ChatBot from "../components/chatbot/ChatBot";
@@ -13,35 +12,13 @@ import "./Layout.css";
 import Textract from "../components/textract/Textract";
 import Transcribe from "../components/transcribe/Transcribe";
 
-// type LayoutProps = {
-//   children: ReactNode;
-// };
-
-// const Layout: FC<LayoutProps> = ({ children }) => {
-//   const leftChildren: ReactNode[] = [];
-//   const rightChildren: ReactNode[] = [];
-
-// Separate children into left and right panels
-//   React.Children.forEach(children, (child) => {
-//     if (React.isValidElement(child)) {
-//       if (child.props?.panel === "left") {
-//         leftChildren.push(child);
-//       } else if (child.props?.panel === "right") {
-//         rightChildren.push(child);
-//       }
-//     }
-//   });
-
 const Layout = () => {
-  // const chartProps = {
-  //   labels: ["00:00", "00:10", "00:20", "00:30", "00:40"],
-  //   data: [65, 59, 80, 81, 56],
-  //   title: "Happiness Intensity",
-  // };
-
   const [isOpen, setIsOpen] = useState(false);
+  const [responseData, setResponseData] = useState(null);
+
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
+    // setResponseData({name: 'abc', dob: '01/01/2020'});
   };
 
   const chartProps = {
@@ -67,80 +44,73 @@ const Layout = () => {
 
   return (
     <>
-      {/* <div className="layout-container">
-        <div className="layout-left-panel">
-          <div>
-            <FileUpload />
-          </div>
-          <div>
-            <DataView />
-          </div>
-        </div>
-        <div className="layout-right-panel">
-          <ChatBot />
-        </div>
-      </div> */}
-
-      <div className="container-fluid  d-flex flex-column vh-100 ash-bg">
+      <div className="container-fluid d-flex flex-column vh-100 ash-bg">
+        {/* Header */}
         <div className="row">
           <div className="col-12 text-center pb-2 header pt-3 pb-3">
-            {/* <img src={require("./img/logo.png")} className="logo" /> */}
-            <div>
-              <h3>NeuroNest</h3>
-            </div>
+            <h3>NeuroNest</h3>
             <div>Digital Space for Neurodivergent</div>
           </div>
+
+          {/* Textract (File Processing) */}
           <div className="col-12 ash-white">
-            {/* Input Data Container */}
-            <ProfileUploader />
+            <Textract onExtractComplete={setResponseData} />
           </div>
         </div>
 
-        <div className="row flex-grow-1 mt-2 mb-2">
-          <div className="col-4 h-100 ash-white info-cont-left">
-            <div className="col-12 h-100 d-flex flex-column">
-              <div className="flex-grow-1">
-                <ImageUploader />
+        {/* Show content only if responseData is available */}
+        {responseData && (
+          <>
+            {/* Main Content */}
+            <div className="row flex-grow-1 mt-2 mb-2">
+              {/* Left Panel */}
+              <div className="col-4 h-100 ash-white info-cont-left">
+                <div className="col-12 h-100 d-flex flex-column">
+                  <div className="flex-grow-1">
+                    <ImageUploader responseData={responseData} />
+                  </div>
+                  <div className="flex-grow-1">
+                    <Transcribe />
+                  </div>
+                </div>
               </div>
-              <div className="flex-grow-1 ">Audio Input</div>
 
-              <div>
-                Textract
-                <Textract></Textract>
-                Transcribe
-                <Transcribe />
+              {/* Center Panel */}
+              <div className="col-8 ash-white info-cont-center">
+                <div>
+                  <VideoUploadComponent />
+                </div>
+                <hr color="#c0c0c0" />
+                <h2 className="mb-4">Graph</h2>
+                <div>
+                  <Chart {...chartProps} />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-8 ash-white info-cont-center">
-            <div>
-              <VideoUploadComponent />
+          </>
+        )}
+
+        {/* Chat Drawer */}
+        <div className={`chat-drawer-container ${isOpen ? "open" : ""}`}>
+          <Drawer
+            open={isOpen}
+            onClose={toggleDrawer}
+            direction="right"
+            className="chat-drawer"
+            size={550}
+          >
+            <div className="chat-container">
+              <ChatBot />
             </div>
-            <hr color="#c0c0c0" />
-            <h2 className="mb-4">Graph</h2>
-            <div>
-              <Chart {...chartProps} />
-            </div>
-          </div>
-          {/* Chat Drawer */}
-          <div className={`chat-drawer-container ${isOpen ? "open" : ""}`}>
-            <Drawer
-              open={isOpen}
-              onClose={toggleDrawer}
-              direction="right"
-              className="chat-drawer"
-              size={550}
-            >
-              <div className="chat-container">
-                <ChatBot />
-              </div>
-            </Drawer>
-          </div>
+          </Drawer>
         </div>
+
+        {/* Chat Button */}
         <button className="chat-button" onClick={toggleDrawer}>
           Chat
         </button>
 
+        {/* Footer */}
         <div className="row">
           <div className="col-12 pt-2 pb-2 footer">Powered By Neuronauts</div>
         </div>

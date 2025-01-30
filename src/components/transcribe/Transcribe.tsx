@@ -1,168 +1,3 @@
-// // import { S3Client } from "@aws-sdk/client-s3";
-// // import AWS from "aws-sdk";
-// import {
-//   GetTranscriptionJobCommand,
-//   StartTranscriptionJobCommand,
-//   TranscribeClient,
-// } from "@aws-sdk/client-transcribe";
-// import React, { useState } from "react";
-// import { S3Client } from "@aws-sdk/client-s3";
-
-// const Transcribe = () => {
-//   const [file, setFile] = useState(null);
-//   const [transcription, setTranscription] = useState("");
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const transcribeClient = new TranscribeClient({
-//     region: "us-east-1", // Replace with your AWS region
-//     credentials: {
-//       accessKeyId: "", // Replace with your AWS access key
-//       secretAccessKey: "", // Replace with your AWS secret key
-//     },
-//   });
-
-//   const handleFileChange = (e) => {
-//     setFile(e.target.files[0]);
-//   };
-
-//   const uploadFileToS3 = async () => {
-//     console.log("Uploading file to S3...");
-//     const bucketName = "asd-transcribe-s3"; // Replace with your S3 bucket name
-//     const region = "us-east-1"; // Replace with your AWS region
-//     const accessKeyId = ""; // Replace with your AWS access key
-//     const secretAccessKey = ""; // Replace with your AWS secret key
-
-//     // AWS.config.update({
-//     //   region,
-//     //   accessKeyId,
-//     //   secretAccessKey,
-//     // });
-
-//     // const s3 = new AWS.S3();
-//     const s3 = new S3Client({
-//         region:"us-east-1",
-//         credentials:{
-//             accessKeyId : "",
-//             secretAccessKey : ""
-//         },
-//     })
-
-//     const objectKey = `uploads/${file.name}`;
-
-//     try {
-//       const params = {
-//         Bucket: bucketName,
-//         Key: objectKey,
-//         Body: file, // Use file directly here
-//         ContentType: file.type, // Ensure the content type is set
-//         // Remove ACL here as it is not supported
-//       };
-
-//       console.log("S3 upload params:", params);
-
-//       const response = await s3.upload(params).promise();
-//       console.log("S3 upload response:", response);
-//       return `s3://${bucketName}/${objectKey}`; // Return the S3 URI for later use
-//     } catch (error) {
-//       console.error("Error uploading file to S3:", error);
-//       return null;
-//     }
-//   };
-
-//   const startTranscriptionJob = async (s3Uri) => {
-//     const transcriptionJobName = `transcription-job-${Date.now()}`;
-//     const languageCode = "en-US"; // Change to the desired language code
-
-//     console.log("Starting transcription job...");
-//     try {
-//       const command = new StartTranscriptionJobCommand({
-//         TranscriptionJobName: transcriptionJobName,
-//         Media: { MediaFileUri: s3Uri },
-//         MediaFormat: "mp3", // Use 'mp3' for MP3 files
-//         LanguageCode: languageCode,
-//         OutputBucketName: "asd-transcribe-s3", // Replace with the same S3 bucket name
-//       });
-//       console.log("Transcription job command:", command);
-//       const response = await transcribeClient.send(command);
-//       console.log("Transcription job response:", response);
-//       return transcriptionJobName;
-//     } catch (error) {
-//       console.error("Error starting transcription job: ", error);
-//       return null;
-//     }
-//   };
-
-//   const getTranscriptionResult = async (jobName) => {
-//     setIsLoading(true);
-//     try {
-//       console.log(`Fetching transcription job: ${jobName}`);
-//       while (true) {
-//         const response = await transcribeClient.send(
-//           new GetTranscriptionJobCommand({ TranscriptionJobName: jobName })
-//         );
-//         const job = response.TranscriptionJob;
-
-//         console.log(
-//           `Job status: ${job.TranscriptionJobStatus}, job name: ${jobName}`
-//         );
-
-//         if (job.TranscriptionJobStatus === "COMPLETED") {
-//           console.log("Job completed");
-//           const result = await fetch(job.Transcript.TranscriptFileUri);
-//           const data = await result.json();
-//           console.log(
-//             "Setting transcription to: ",
-//             data.results.transcripts.map((t) => t.transcript).join(" ")
-//           );
-//           setTranscription(
-//             data.results.transcripts.map((t) => t.transcript).join(" ")
-//           );
-//           break;
-//         } else if (job.TranscriptionJobStatus === "FAILED") {
-//           console.error("Job failed: ", job.FailureReason);
-//           console.error("Transcription job failed: ", job.FailureReason);
-//           break;
-//         }
-
-//         console.log("Waiting 5 seconds before polling again...");
-//         await new Promise((resolve) => setTimeout(resolve, 5000)); // Poll every 5 seconds
-//       }
-//     } catch (error) {
-//       console.error("Error fetching transcription result: ", error);
-//     }
-//     setIsLoading(false);
-//   };
-
-//   const handleTranscribe = async () => {
-//     const s3Uri = await uploadFileToS3();
-//     if (!s3Uri) return;
-
-//     const jobName = await startTranscriptionJob(s3Uri);
-//     if (!jobName) return;
-
-//     await getTranscriptionResult(jobName);
-//   };
-
-//   return (
-//     <div className="app">
-//       <h1>Audio File Transcription</h1>
-//       <input type="file" accept="audio/*" onChange={handleFileChange} />
-//       <button onClick={handleTranscribe} disabled={isLoading || !file}>
-//         {isLoading ? "Transcribing..." : "Upload and Transcribe"}
-//       </button>
-//       <textarea
-//         value={transcription}
-//         readOnly
-//         rows={10}
-//         cols={50}
-//         placeholder="Transcription will appear here..."
-//       ></textarea>
-//     </div>
-//   );
-// };
-
-// export default Transcribe;
-
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import {
   GetTranscriptionJobCommand,
@@ -170,7 +5,7 @@ import {
   TranscribeClient,
 } from "@aws-sdk/client-transcribe";
 import React, { useState } from "react";
-import { s3ClientTranscribe } from "./aws-config-transcribe";
+import { accessKeyId, s3Client, secretAccessKey } from "../Methods/aws-config";
 
 const Transcribe = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -180,8 +15,8 @@ const Transcribe = () => {
   const transcribeClient = new TranscribeClient({
     region: "us-east-1",
     credentials: {
-      accessKeyId: "",  // transcribe creds
-      secretAccessKey: "",
+      accessKeyId: accessKeyId, // Add Transcribe credentials
+      secretAccessKey: secretAccessKey,
     },
   });
 
@@ -202,11 +37,11 @@ const Transcribe = () => {
       const command = new PutObjectCommand({
         Bucket: bucketName,
         Key: objectKey,
-        Body: new Uint8Array(arrayBuffer), // Convert to Uint8Array
+        Body: new Uint8Array(arrayBuffer),
         ContentType: file.type,
       });
 
-      await s3ClientTranscribe.send(command);
+      await s3Client.send(command);
       console.log("S3 Upload Successful:", objectKey);
       return `s3://${bucketName}/${objectKey}`;
     } catch (error) {
@@ -215,9 +50,7 @@ const Transcribe = () => {
     }
   };
 
-  const startTranscriptionJob = async (
-    s3Uri: string
-  ): Promise<string | null> => {
+  const startTranscriptionJob = async (s3Uri: string): Promise<string | null> => {
     const transcriptionJobName = `transcription-job-${Date.now()}`;
     const languageCode = "en-US";
 
@@ -236,6 +69,7 @@ const Transcribe = () => {
       return transcriptionJobName;
     } catch (error) {
       console.error("Error starting transcription job:", error);
+      setIsLoading(false);
       return null;
     }
   };
@@ -256,9 +90,7 @@ const Transcribe = () => {
           console.log("Job completed, fetching transcript...");
           const result = await fetch(job.Transcript?.TranscriptFileUri || "");
           const data = await result.json();
-          setTranscription(
-            data.results.transcripts.map((t: any) => t.transcript).join(" ")
-          );
+          setTranscription(data.results.transcripts.map((t: any) => t.transcript).join(" "));
           break;
         } else if (job?.TranscriptionJobStatus === "FAILED") {
           console.error("Transcription job failed:", job.FailureReason);
@@ -275,6 +107,7 @@ const Transcribe = () => {
   };
 
   const handleTranscribe = async () => {
+    setIsLoading(true);
     const s3Uri = await uploadFileToS3();
     if (!s3Uri) return;
 
@@ -285,19 +118,36 @@ const Transcribe = () => {
   };
 
   return (
-    <div className="app">
-      <h1>Audio File Transcription</h1>
-      <input type="file" accept="audio/*" onChange={handleFileChange} />
-      <button onClick={handleTranscribe} disabled={isLoading || !file}>
-        {isLoading ? "Transcribing..." : "Upload and Transcribe"}
-      </button>
-      <textarea
-        value={transcription}
-        readOnly
-        rows={10}
-        cols={50}
-        placeholder="Transcription will appear here..."
-      ></textarea>
+    <div className="container-fluid p-3">
+      <div className="card p-3 shadow-sm">
+        <h6 className="card-title mb-2">Upload an Audio File</h6>
+        <div className="d-flex align-items-center mb-2">
+          <input
+            type="file"
+            className="form-control form-control-sm me-2"
+            onChange={handleFileChange}
+            accept="audio/*"
+            style={{ width: "250px" }}
+          />
+          <button className="btn btn-primary btn-sm" onClick={handleTranscribe} disabled={!file}>
+            Upload & Analyze
+          </button>
+        </div>
+        {isLoading && <div className="text-primary fw-bold">Analyzing...</div>} {/* ✅ Show "Analyzing..." */}
+      </div>
+
+      {transcription && (
+        <div className="card p-2 shadow-sm mt-3">
+          <h6 className="card-title mb-2">Transcription Result</h6>
+          <textarea
+            className="form-control"
+            value={transcription}
+            readOnly
+            rows={8}
+            placeholder="Transcription will appear here..."
+          />
+        </div>
+      )}
     </div>
   );
 };

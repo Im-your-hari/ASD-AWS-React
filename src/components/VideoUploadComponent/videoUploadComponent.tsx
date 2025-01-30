@@ -20,6 +20,7 @@ interface VideoFile {
 const VideoUploadComponent: React.FC = () => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [videoFiles, setVideoFiles] = useState<VideoFile[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<VideoFile[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
@@ -31,7 +32,7 @@ const VideoUploadComponent: React.FC = () => {
         analyzingStatus: "Pending",
         progress: 0, // Initialize progress to 0%
       }));
-      setVideoFiles(newVideoFiles);
+      setUploadedFiles(newVideoFiles);
     }
   };
 
@@ -41,7 +42,7 @@ const VideoUploadComponent: React.FC = () => {
       return;
     }
 
-    const updatedVideoFiles = [...videoFiles];
+    const updatedVideoFiles = [...uploadedFiles];
 
     const uploadTasks = Array.from(files).map(async (file, index) => {
       const fileName = `${Date.now()}-${file.name}`;
@@ -70,11 +71,21 @@ const VideoUploadComponent: React.FC = () => {
             const blob = file.slice(start, end);
 
             uploadPromises.push(
-              uploadPart(UploadId!, fileName, blob, partNumber, file.size, (progress) => {
-                uploadedSize += blob.size;
-                updatedVideoFiles[index].progress = Math.min(100, Math.round((uploadedSize / file.size) * 100));
-                setVideoFiles([...updatedVideoFiles]);
-              })
+              uploadPart(
+                UploadId!,
+                fileName,
+                blob,
+                partNumber,
+                file.size,
+                (progress) => {
+                  uploadedSize += blob.size;
+                  updatedVideoFiles[index].progress = Math.min(
+                    100,
+                    Math.round((uploadedSize / file.size) * 100)
+                  );
+                  setVideoFiles([...updatedVideoFiles]);
+                }
+              )
             );
           }
 
@@ -96,28 +107,40 @@ const VideoUploadComponent: React.FC = () => {
 
     await Promise.all(uploadTasks);
 
-    alert("All uploads completed!");
+    // alert("All uploads completed!");
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">Video Upload</h2>
-      <div className="mb-4">
+    <div className="container mt-3">
+      <h5 className="card-title mb-3">Video Upload</h5>
+      <div
+        className="mb-2"
+        style={{
+          display: "flex",
+          width: "100%",
+        }}
+      >
         <input
+          style={{
+            width: "70%",
+            marginRight: "30px",
+            height: "40px",
+          }}
           type="file"
           multiple
           accept="video/*"
           onChange={handleFileChange}
           className="form-control"
         />
+        <button
+          className="btn btn-primary mb-4"
+          onClick={uploadVideos}
+          disabled={!files}
+        >
+          Upload Videos
+        </button>
       </div>
-      <button
-        className="btn btn-primary mb-4"
-        onClick={uploadVideos}
-        disabled={!files}
-      >
-        Upload Videos
-      </button>
+
       <table className="table table-bordered">
         <thead className="thead-dark">
           <tr>

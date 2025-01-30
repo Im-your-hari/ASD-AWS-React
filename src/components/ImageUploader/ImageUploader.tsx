@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { uploadDirect, uploadDirectImage } from "../Methods/multipart-upload-service";
-const API_URL = "https://dfoeutm9lb.execute-api.us-west-2.amazonaws.com/Dev";
+import {  uploadDirectImage } from "../Methods/multipart-upload-service";
+const API_URL = "https://zoxpu8wuzg.execute-api.us-east-1.amazonaws.com/Staging";
+type ExtractedData = {
+  name: string | null;
+  dob: string | null;
+  age: number | null;
+  phone: string | null;
+  email: string | null;
+};
 
-const ImageUploader: React.FC = () => {
+const ImageUploader: React.FC =  ({ responseData }: { responseData: ExtractedData | null }) => {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -42,8 +49,8 @@ const ImageUploader: React.FC = () => {
 
       // Prepare request body
       const requestBody = {
-        name: "kid01",
-        dob: "2/2/2025",
+        name: responseData?.name,
+        dob: responseData?.dob,
         objectKey: objectKey,
         asdPercentage: 60
       };
@@ -115,8 +122,14 @@ const ImageUploader: React.FC = () => {
         {/* Display Percentage Response */}
         {percentage !== null && (
           <div className="mt-3 text-center">
-            <strong>Percentage:</strong> {percentage}%
-          </div>
+          <strong>Autism Spectrum Assessment Score: </strong>
+          <span 
+            className="fw-bolder" 
+            style={{ color: percentage >= 60 ? '#dc3545' : 'inherit' }}
+          >
+            {percentage}%
+          </span>
+        </div>
         )}
       </div>
     </div>
