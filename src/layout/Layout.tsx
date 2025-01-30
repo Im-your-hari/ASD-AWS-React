@@ -10,6 +10,8 @@ import VideoUploadComponent from "../components/VideoUploadComponent/videoUpload
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 import "./Layout.css";
+import Textract from "../components/textract/Textract";
+import Transcribe from "../components/transcribe/Transcribe";
 
 // type LayoutProps = {
 //   children: ReactNode;
@@ -101,6 +103,13 @@ const Layout = () => {
                 <ImageUploader />
               </div>
               <div className="flex-grow-1 ">Audio Input</div>
+
+              <div>
+                Textract
+                <Textract></Textract>
+                Transcribe
+                <Transcribe />
+              </div>
             </div>
           </div>
           <div className="col-8 ash-white info-cont-center">
