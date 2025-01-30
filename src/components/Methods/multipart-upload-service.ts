@@ -77,14 +77,14 @@ export const completeMultipartUpload = async (
 
 export const uploadDirect = async (
   file: File,
+  fileName: string,
   onProgress?: (progress: number) => void // Progress callback
 ): Promise<void> => {
   const arrayBuffer = await file.arrayBuffer();
   const body = new Uint8Array(arrayBuffer);
-
   const command = new PutObjectCommand({
     Bucket: "asd-assets",
-    Key: file.name,
+    Key: fileName,
     Body: body,
     ContentType: file.type,
   });

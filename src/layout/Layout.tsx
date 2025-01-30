@@ -18,7 +18,7 @@ const Layout = () => {
 
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
-    // setResponseData({name: 'abc', dob: '01/01/2020'});
+    setResponseData({name: 'roshith2', dob: '01/01/2020'});
   };
 
   const chartProps = {
@@ -78,7 +78,7 @@ const Layout = () => {
               {/* Center Panel */}
               <div className="col-8 ash-white info-cont-center">
                 <div>
-                  <VideoUploadComponent />
+                  <VideoUploadComponent responseData={responseData} />
                 </div>
                 <hr color="#c0c0c0" />
                 <h2 className="mb-4">Graph</h2>
