@@ -73,10 +73,26 @@ import {
   export const uploadDirect = async (file: File): Promise<void> => {
     const command = new PutObjectCommand({
       Bucket: "asd-exp-image",
-      Key: `${Date.now()}-${file.name}`,
+      Key: `${file.name}`,
       Body: file,
+    });
+    console.log('uploadDirect');
+    await s3Client.send(command);
+  };
+  
+  export const uploadDirectImage = async (file: File): Promise<void> => {
+    const objectKey = `${Date.now()}-${file.name}`;
+  
+    // Convert File to ArrayBuffer before uploading
+    const arrayBuffer = await file.arrayBuffer();
+    const body = new Uint8Array(arrayBuffer); // Convert to Uint8Array
+  
+    const command = new PutObjectCommand({
+      Bucket: "asd-exp-image",
+      Key: objectKey,
+      Body: body, // Pass Uint8Array instead of File/Blob
+      ContentType: file.type, // Ensure correct MIME type
     });
   
     await s3Client.send(command);
   };
-  
