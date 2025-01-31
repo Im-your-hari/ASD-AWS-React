@@ -42,6 +42,12 @@ const Layout = () => {
     xLabel: "Time",
   };
 
+  const handleViewFile = (fileName: string) => {
+    console.log("Viewing file:", fileName);
+    // setSelectedFile(fileName);
+    // // You can now navigate to a different page, open a modal, etc.
+  };
+
   return (
     <>
       <div className="container-fluid d-flex flex-column vh-100 ash-bg">
@@ -78,7 +84,7 @@ const Layout = () => {
               {/* Center Panel */}
               <div className="col-8 ash-white info-cont-center">
                 <div>
-                  <VideoUploadComponent responseData={responseData} />
+                  <VideoUploadComponent responseData={responseData} onViewFile={handleViewFile} />
                 </div>
                 <hr color="#c0c0c0" />
                 <h2 className="mb-4">Graph</h2>

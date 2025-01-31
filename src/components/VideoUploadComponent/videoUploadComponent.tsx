@@ -22,6 +22,10 @@ interface VideoFile {
   analyzingStatus: string;
   progress: number; // New field for tracking upload progress
 }
+interface VideoUploadProps {
+  responseData: ExtractedData | null;
+  onViewFile: (fileName: string) => void; // Callback function to pass fileName
+}
 
 type ExtractedData = {
   name: string | null;
@@ -31,10 +35,9 @@ type ExtractedData = {
   email: string | null;
 };
 
-const VideoUploadComponent: React.FC = ({
+const VideoUploadComponent: React.FC<VideoUploadProps> = ({
   responseData,
-}: {
-  responseData: ExtractedData | null;
+  onViewFile,
 }) => {
   const [files, setFiles] = useState<FileList | null>(null);
   const [videoFiles, setVideoFiles] = useState<VideoFile[]>([]);
@@ -241,30 +244,16 @@ const VideoUploadComponent: React.FC = ({
   return (
     <div className="container mt-3">
       <h5 className="card-title mb-3">Video Upload</h5>
-      <div
-        className="mb-2"
-        style={{
-          display: "flex",
-          width: "100%",
-        }}
-      >
+      <div className="mb-2" style={{ display: "flex", width: "100%" }}>
         <input
-          style={{
-            width: "70%",
-            marginRight: "30px",
-            height: "40px",
-          }}
+          style={{ width: "70%", marginRight: "30px", height: "40px" }}
           type="file"
           ref={fileInputRef}
           accept="video/*"
           onChange={handleFileChange}
           className="form-control"
         />
-        <button
-          className="btn btn-primary mb-4"
-          onClick={uploadVideos}
-          disabled={!files}
-        >
+        <button className="btn btn-primary mb-4" onClick={uploadVideos} disabled={!files}>
           Upload Videos
         </button>
       </div>
@@ -274,7 +263,6 @@ const VideoUploadComponent: React.FC = ({
           <tr>
             <th>File Name</th>
             <th>Upload Status</th>
-            {/* <th>Progress</th> */}
             <th>Analyzing Status</th>
             <th>Actions</th>
           </tr>
@@ -283,7 +271,6 @@ const VideoUploadComponent: React.FC = ({
           {videoFiles.map((file, index) => (
             <tr key={index}>
               <td>{file.name}</td>
-              {/* <td>{file.uploadStatus}</td> */}
               <td>
                 {file.uploadStatus === "Uploading" ? (
                   <div className="progress">
@@ -306,7 +293,7 @@ const VideoUploadComponent: React.FC = ({
               <td>
                 <button
                   className="btn btn-secondary btn-sm"
-                  onClick={() => alert(`Viewing file: ${file.name}`)}
+                  onClick={() => onViewFile(file.timeStampName!)} // Pass fileName to parent
                   disabled={file.analyzingStatus !== "Completed"}
                 >
                   View
@@ -319,5 +306,6 @@ const VideoUploadComponent: React.FC = ({
     </div>
   );
 };
+
 
 export default VideoUploadComponent;
